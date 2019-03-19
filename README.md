@@ -8,5 +8,7 @@ RSS源：https://www.google.com/alerts/feeds/06602601644343027574/40416033524290
 
 ## Deploy
 `crontab cron.conf`
+
 `0 7 * * * /usr/bin/python /home/ubuntu/publish/publish.py > /home/ubuntu/publish/publish.log 2>&1 &`
+
 每天7点定时运行程序。
