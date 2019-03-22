@@ -64,9 +64,16 @@ for p in publishes:
         print(entry['published'])
         published = datetime.strptime(entry['published'], time_format)
         if (published > updated):
+            updated = published
             content = read_entry(entry)
             publish(content, p)
             print(content['title'])
-    p['updated'] = feed['feed']['updated']
-    
+    # p['updated'] = feed['feed']['updated']
+    p['updated'] = updated.strftime(time_format)
+
 write_conf(publishes)
+
+# url = "https://cdn.werss.weapp.design/api/v1/feeds/7061a4e1-3d34-472a-942a-e370c7ea2ec4.xml"
+# feed = feedparser.parse(url)
+# # print(feed['feed'])
+# print(feed['entries'][0])
