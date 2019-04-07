@@ -15,11 +15,9 @@ time_format = "%a, %d %b %Y %H:%M:%S GMT"
 
 #for test
 # accesstoken = "eb8b35cc-fb1a-4e0d-822b-4b729617fff8"
-# tab = "dev"
 pwd = "./"
 
 # online
-tab = "share"
 # pwd = "/home/ubuntu/publish/"
 
 def read_entry(entry):
@@ -35,7 +33,7 @@ def read_entry(entry):
 def publish(topic, user):
     payload = {
         "title": topic['title'],
-        "tab": tab,
+        "tab": user['tab'],
         "content": topic['author']+" "+user['title']+"\r\n[原文链接]"+"("+topic['link']+")\r\n"+topic['summary']
     }
     querystring = {"accesstoken": user['accesstoken']}
