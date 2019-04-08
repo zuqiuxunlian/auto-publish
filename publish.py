@@ -27,6 +27,7 @@ def origin_url(url):
 
 def topic(entry):
     title = entry['title'].replace("<b>", "").replace("</b>", "")
+    title = title.replace("&quot;", "\"")
     summary = entry['summary'].replace("<b>", "").replace("</b>", "")
     summary = summary.replace("&nbsp;", "")
     link = origin_url(entry['link'])
