@@ -9,6 +9,7 @@ try:
 except ImportError:
      from urlparse import urlparse, parse_qsl
 from markdownify import markdownify as md
+from hanziconv import HanziConv
 
 publish_api = "https://bbs.zuqiuxunlian.com/api/v1/topics"
 time_format = "%a, %d %b %Y %H:%M:%S GMT"
@@ -31,10 +32,13 @@ def read_entry(entry):
     return topic
     
 def publish(topic, user):
+    title = HanziConv.toSimplified(topic['title'])
+    content = topic['author']+" "+user['title']+"\r\n[原文链接]"+"("+topic['link']+")\r\n"+topic['summary']
+    content = HanziConv.toSimplified(content)
     payload = {
-        "title": topic['title'],
+        "title": title,
         "tab": user['tab'],
-        "content": topic['author']+" "+user['title']+"\r\n[原文链接]"+"("+topic['link']+")\r\n"+topic['summary']
+        "content": content
     }
     querystring = {"accesstoken": user['accesstoken']}
     headers = {
