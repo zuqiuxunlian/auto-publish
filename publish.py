@@ -40,10 +40,11 @@ def topic(entry):
     return topic
     
 def publish(topic):
+    link = topic['link']
     payload = {
         "title": topic['title'],
         "tab": tab,
-        "content": topic['summary']+"\r\n"+topic['link']
+        "content": topic['summary']+"\r\n\r\n"+"["+link+"]("+link+")"
     }
     querystring = {"accesstoken":accesstoken}
     headers = {

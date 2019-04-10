@@ -16,15 +16,15 @@ time_format = "%a, %d %b %Y %H:%M:%S GMT"
 
 #for test
 # accesstoken = "eb8b35cc-fb1a-4e0d-822b-4b729617fff8"
-pwd = "./"
+# pwd = "./"
 
 # online
-# pwd = "/home/ubuntu/publish/"
+pwd = "/root/auto-publish/wechat_publish/"
 
 def read_entry(entry):
     topic = dict(
         id=entry['id'],
-        author = entry['author'],
+        author = entry.get('author', ''),
         published=datetime.strptime(entry['published'], time_format),
         title = entry['title'],
         summary=md(entry['summary']),
@@ -33,7 +33,7 @@ def read_entry(entry):
     
 def publish(topic, user):
     title = HanziConv.toSimplified(topic['title'])
-    content = topic['author']+" "+user['title']+"\r\n[原文链接]"+"("+topic['link']+")\r\n"+topic['summary']
+    content = topic['author']+" "+user['title']+" [原文链接]"+"("+topic['link']+")\r\n\r\n"+topic['summary']
     content = HanziConv.toSimplified(content)
     payload = {
         "title": title,
