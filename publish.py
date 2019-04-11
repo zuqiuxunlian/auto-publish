@@ -10,14 +10,15 @@ except ImportError:
      from urlparse import urlparse, parse_qsl
 
 publish_api = "https://bbs.zuqiuxunlian.com/api/v1/topics"
-rss_url = "https://www.google.com/alerts/feeds/06602601644343027574/4041603352429017360"
+rss_url = "https://www.google.com/alerts/feeds/06602601644343027574/12963537258599994108"
 pwd = "/home/ubuntu/publish/"
+last_time = datetime.strptime("2019-04-10T05:26:15Z", '%Y-%m-%dT%H:%M:%SZ')
 #for test
 #accesstoken = ""
 #tab = "dev"
 
 #online
-accesstoken = ""
+accesstoken = "9221248a-2ab9-48dc-ab66-123567696fbb"
 tab = "news"
 
 def origin_url(url):
