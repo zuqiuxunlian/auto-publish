@@ -4,6 +4,8 @@ import feedparser
 import requests
 import json
 from datetime import datetime
+from datetime import timedelta
+
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -62,15 +64,18 @@ for p in publishes:
     feed = feedparser.parse(p['rss_url'])
     updated = datetime.strptime(p['updated'], time_format)
     # updated = datetime.strptime("Mon, 18 Mar 2019 00:34:42 GMT", time_format)
+    print(p['title'])
     for entry in reversed(feed['entries']):
         print(entry['published'])
         published = datetime.strptime(entry['published'], time_format)
-        if (published > updated):
+        if (published >= updated):
             updated = published
             content = read_entry(entry)
             publish(content, p)
-            print(content['title'])
-    # p['updated'] = feed['feed']['updated']
+            print(entry['title'])
+        # else:
+            # print(entry['title'])
+    updated = updated + timedelta(minutes=123)
     p['updated'] = updated.strftime(time_format)
 
 write_conf(publishes)
