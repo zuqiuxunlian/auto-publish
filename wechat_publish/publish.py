@@ -65,17 +65,20 @@ for p in publishes:
     updated = datetime.strptime(p['updated'], time_format)
     # updated = datetime.strptime("Mon, 18 Mar 2019 00:34:42 GMT", time_format)
     print(p['title'])
+    flag = False
     for entry in reversed(feed['entries']):
         print(entry['published'])
         published = datetime.strptime(entry['published'], time_format)
-        if (published >= updated):
+        if (published >= updated): # 同时间有几个文章
             updated = published
             content = read_entry(entry)
             publish(content, p)
             print(entry['title'])
+            flag = True
         # else:
             # print(entry['title'])
-    updated = updated + timedelta(minutes=123)
+    if (flag):
+        updated = updated + timedelta(minutes=1)
     p['updated'] = updated.strftime(time_format)
 
 write_conf(publishes)
