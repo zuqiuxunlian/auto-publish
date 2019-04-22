@@ -4,76 +4,96 @@ import feedparser
 import requests
 import json
 from datetime import datetime
+from datetime import timedelta
+
 try:
     from urllib.parse import urlparse
 except ImportError:
      from urlparse import urlparse, parse_qsl
 
-publish_api = "https://bbs.zuqiuxunlian.com/api/v1/topics"
-rss_url = "https://www.google.com/alerts/feeds/06602601644343027574/12963537258599994108"
-pwd = "/home/ubuntu/publish/"
-last_time = datetime.strptime("2019-04-10T05:26:15Z", '%Y-%m-%dT%H:%M:%SZ')
-#for test
-#accesstoken = ""
-#tab = "dev"
+publish_api = "https://bbt.zuqiuxunlian.com/api/v1/topics"
+time_format = "%Y-%m-%dT%H:%M:%SZ"
 
-#online
-accesstoken = "9221248a-2ab9-48dc-ab66-123567696fbb"
-tab = "news"
+#for test
+# accesstoken = "eb8b35cc-fb1a-4e0d-822b-4b729617fff8"
+# pwd = "./"
+
+# online
+pwd = "/home/ubuntu/publish/"
 
 def origin_url(url):
     parsed_url = urlparse(url)
     qs = dict(parse_qsl(parsed_url.query))
     return qs['url']
 
-def topic(entry):
+def read_entry(entry):
     title = entry['title'].replace("<b>", "").replace("</b>", "")
     title = title.replace("&quot;", "\"")
+    title = title.replace("&amp;", "&")
     summary = entry['summary'].replace("<b>", "").replace("</b>", "")
     summary = summary.replace("&nbsp;", "")
     link = origin_url(entry['link'])
     topic = dict(
         id=entry['id'],
-        published=entry['published'],
-        title=title,
+        author = entry.get('author', ''),
+        published=datetime.strptime(entry['published'], time_format),
+        title = title,
         summary=summary,
-        link=link)
+        link = link)
     return topic
     
-def publish(topic):
+def publish(topic, user):
     link = topic['link']
+    title = topic['title']
+    content = topic['summary']+"\r\n\r\n"+"["+link+"]("+link+")"
+    # TODO 翻译 title，content
     payload = {
-        "title": topic['title'],
-        "tab": tab,
-        "content": topic['summary']+"\r\n\r\n"+"["+link+"]("+link+")"
+        "title": title,
+        "tab": user['tab'],
+        "content": content
     }
-    querystring = {"accesstoken":accesstoken}
+    querystring = {"accesstoken": user['accesstoken']}
     headers = {
         'Content-Type': "application/json",
         'cache-control': "no-cache",
         }
     response = requests.request("POST", publish_api, json=payload, headers=headers, params=querystring)
 
-def read_time():
+def read_conf():
     with open(pwd+'conf.json', 'r') as f:
         data = json.load(f)
     return data
         
-def write_time(data):
+def write_conf(data):
     with open(pwd+'conf.json', 'w') as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=4, ensure_ascii=False)
     
 # main
-# feed = feedparser.parse(r'data.xml')
-feed = feedparser.parse(rss_url)
-for entry in reversed(feed['entries']):
-    print(topic(entry)['published'])
-    last_time = datetime.strptime(read_time()['last_time'], '%Y-%m-%dT%H:%M:%SZ')
-    new_time = datetime.strptime(entry['published'], '%Y-%m-%dT%H:%M:%SZ')
-    if (last_time < new_time):
-        last_time = new_time
-        content = topic(entry)
-        publish(content)
-        print(content['title'].encode('utf-8'))
+publishes = read_conf()
+for p in publishes:
+    feed = feedparser.parse(p['rss_url'])
+    updated = datetime.strptime(p['updated'], time_format)
+    # updated = datetime.strptime("Mon, 18 Mar 2019 00:34:42 GMT", time_format)
+    print(p['title'])
+    flag = False
+    for entry in reversed(feed['entries']):
+        print(entry['published'])
+        published = datetime.strptime(entry['published'], time_format)
+        if (published >= updated): # 同时间有几个文章
+            updated = published
+            content = read_entry(entry)
+            publish(content, p)
+            print(entry['title'])
+            flag = True
+        # else:
+            # print(entry['title'])
+    if (flag):
+        updated = updated + timedelta(minutes=1)
+    p['updated'] = updated.strftime(time_format)
 
-write_time(dict(last_time=last_time.strftime("%Y-%m-%dT%H:%M:%SZ")))
+write_conf(publishes)
+
+# url = "https://cdn.werss.weapp.design/api/v1/feeds/7061a4e1-3d34-472a-942a-e370c7ea2ec4.xml"
+# feed = feedparser.parse(url)
+# # print(feed['feed'])
+# print(feed['entries'][0])
