@@ -11,7 +11,7 @@ try:
 except ImportError:
      from urlparse import urlparse, parse_qsl
 
-publish_api = "https://bbt.zuqiuxunlian.com/api/v1/topics"
+publish_api = "https://bbs.zuqiuxunlian.com/api/v1/topics"
 time_format = "%Y-%m-%dT%H:%M:%SZ"
 
 #for test
