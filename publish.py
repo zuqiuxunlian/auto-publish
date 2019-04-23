@@ -83,10 +83,10 @@ for p in publishes:
             updated = published
             content = read_entry(entry)
             publish(content, p)
-            print(entry['title'])
+            print(entry['title'].encode('utf-8'))
             flag = True
         # else:
-            # print(entry['title'])
+            # print(entry['title'].encode('utf-8'))
     if (flag):
         updated = updated + timedelta(minutes=1)
     p['updated'] = updated.strftime(time_format)
