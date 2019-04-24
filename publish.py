@@ -5,6 +5,8 @@ import requests
 import json
 from datetime import datetime
 from datetime import timedelta
+from translate import translate
+import json
 
 try:
     from urllib.parse import urlparse
@@ -45,8 +47,14 @@ def read_entry(entry):
 def publish(topic, user):
     link = topic['link']
     title = topic['title']
-    content = topic['summary']+"\r\n\r\n"+"["+link+"]("+link+")"
-    # TODO 翻译 title，content
+    summary = topic['summary']
+    # 翻译 title，content
+    title = title +" - "+ translate(title)
+    content = summary +"\r\n\r\n"+ translate(summary)
+    content = content +"\r\n\r\n"+"["+link+"]("+link+")"
+    
+    print(title.encode('utf-8'))
+    
     payload = {
         "title": title,
         "tab": user['tab'],
@@ -83,7 +91,7 @@ for p in publishes:
             updated = published
             content = read_entry(entry)
             publish(content, p)
-            print(entry['title'].encode('utf-8'))
+            # print(entry['title'].encode('utf-8'))
             flag = True
         # else:
             # print(entry['title'].encode('utf-8'))
