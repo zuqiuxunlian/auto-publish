@@ -49,9 +49,11 @@ def publish(topic, user):
     title = topic['title']
     summary = topic['summary']
     # 翻译 title，content
-    title = title +" - "+ translate(title)
-    content = summary +"\r\n\r\n"+ translate(summary)
-    content = content +"\r\n\r\n"+"["+link+"]("+link+")"
+    if user['lang'] == 'en':
+        title = title +" - "+ translate(title)
+        summary = summary +"\r\n\r\n"+ translate(summary)
+        
+    content = summary +"\r\n\r\n"+"["+link+"]("+link+")"
     
     print(title.encode('utf-8'))
     
