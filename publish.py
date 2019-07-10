@@ -50,8 +50,8 @@ def publish(topic, user):
     summary = topic['summary']
     # 翻译 title，content
     if user['lang'] == 'en':
-        title = title +" - "+ translate(title)
-        summary = summary +"\r\n\r\n"+ translate(summary)
+        title = translate(title) +" - "+ title
+        summary = translate(summary) +"\r\n\r\n"+ summary
         
     content = summary +"\r\n\r\n"+"["+link+"]("+link+")"
     
