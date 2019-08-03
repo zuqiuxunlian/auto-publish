@@ -75,5 +75,12 @@
         "title": "公众号「哈比足球」",
         "tab": "share",
         "accesstoken": ""
+    },
+    {
+      "rss_url": "https://cdn.werss.weapp.design/api/v1/feeds/6d5d6e9d-e000-45cd-b4f5-31c90fbe3178.xml",
+      "updated": "Tue, 25 Jan 2019 15:13:32 GMT",
+      "title": "公众号「武磊周记」",
+      "tab": "share",
+      "accesstoken": "wulei"
     }
 ]
