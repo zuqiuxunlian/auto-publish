@@ -1,10 +1,18 @@
 [
     {
-        "rss_url": "",
-        "title": "",
-        "tab": "",
         "lang": "en",
+        "rss_url": "https://www.google.com/alerts/feeds/06602601644343027574/16976965926552830353",
+        "updated": "2019-07-10T01:08:30Z",
         "accesstoken": "",
-        "updated": "2019-04-22T05:26:15Z"
+        "title": "Football",
+        "tab": "news"
+    },
+    {
+        "lang": "zh-CN",
+        "rss_url": "https://www.google.com/alerts/feeds/06602601644343027574/12963537258599994108",
+        "updated": "2019-07-10T02:27:15Z",
+        "accesstoken": "",
+        "title": "Football Coach (Chinese)",
+        "tab": "news"
     }
 ]
