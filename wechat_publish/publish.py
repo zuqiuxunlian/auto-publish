@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 import feedparser
 import requests
+import ssl
 import json
 from datetime import datetime
 from datetime import timedelta
@@ -13,15 +14,21 @@ except ImportError:
 from markdownify import markdownify as md
 from hanziconv import HanziConv
 
+agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
+
 publish_api = "https://bbs.zuqiuxunlian.com/api/v1/topics"
 time_format = "%a, %d %b %Y %H:%M:%S GMT"
 
-#for test
+# for test
 # accesstoken = "eb8b35cc-fb1a-4e0d-822b-4b729617fff8"
 # pwd = "./"
 
 # online
 pwd = "/root/auto-publish/wechat_publish/"
+
+if hasattr(ssl, '_create_unverified_context'):
+    ssl._create_default_https_context = ssl._create_unverified_context
+
 
 def read_entry(entry):
     topic = dict(
@@ -32,7 +39,7 @@ def read_entry(entry):
         summary=md(entry['summary']),
         link = entry['link'])
     return topic
-    
+
 def publish(topic, user):
     title = HanziConv.toSimplified(topic['title'])
     content = topic['author']+" "+user['title']+" [原文链接]"+"("+topic['link']+")\r\n\r\n"+topic['summary']
@@ -53,15 +60,15 @@ def read_conf():
     with open(pwd+'conf.json', 'r') as f:
         data = json.load(f)
     return data
-        
+
 def write_conf(data):
     with open(pwd+'conf.json', 'w') as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
-    
+
 # main
 publishes = read_conf()
 for p in publishes:
-    feed = feedparser.parse(p['rss_url'])
+    feed = feedparser.parse(p['rss_url'], agent=agent)
     updated = datetime.strptime(p['updated'], time_format)
     # updated = datetime.strptime("Mon, 18 Mar 2019 00:34:42 GMT", time_format)
     print(p['title'])
@@ -69,7 +76,7 @@ for p in publishes:
     for entry in reversed(feed['entries']):
         print(entry['published'])
         published = datetime.strptime(entry['published'], time_format)
-        if (published >= updated): # 同时间有几个文章
+        if (published >= updated):  # 同时间有几个文章
             updated = published
             content = read_entry(entry)
             publish(content, p)
