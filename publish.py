@@ -1,22 +1,27 @@
-#!/usr/bin/python
+# !/usr/bin/python
 # -*- coding: UTF-8 -*-
 import feedparser
 import requests
+import ssl
 import json
 from datetime import datetime
 from datetime import timedelta
 from translate import translate
-import json
 
 try:
     from urllib.parse import urlparse
 except ImportError:
      from urlparse import urlparse, parse_qsl
 
+if hasattr(ssl, '_create_unverified_context'):
+    ssl._create_default_https_context = ssl._create_unverified_context
+
+agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'
+
 publish_api = "https://bbs.zuqiuxunlian.com/api/v1/topics"
 time_format = "%Y-%m-%dT%H:%M:%SZ"
 
-#for test
+# for test
 # accesstoken = "eb8b35cc-fb1a-4e0d-822b-4b729617fff8"
 # pwd = "./"
 
@@ -43,7 +48,7 @@ def read_entry(entry):
         summary=summary,
         link = link)
     return topic
-    
+
 def publish(topic, user):
     link = topic['link']
     title = topic['title']
@@ -52,11 +57,11 @@ def publish(topic, user):
     if user['lang'] == 'en':
         title = translate(title) +" - "+ title
         summary = translate(summary) +"\r\n\r\n"+ summary
-        
+
     content = summary +"\r\n\r\n"+"["+link+"]("+link+")"
-    
+
     print(title.encode('utf-8'))
-    
+
     payload = {
         "title": title,
         "tab": user['tab'],
@@ -73,15 +78,15 @@ def read_conf():
     with open(pwd+'conf.json', 'r') as f:
         data = json.load(f)
     return data
-        
+
 def write_conf(data):
     with open(pwd+'conf.json', 'w') as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
-    
+
 # main
 publishes = read_conf()
 for p in publishes:
-    feed = feedparser.parse(p['rss_url'])
+    feed = feedparser.parse(p['rss_url'], agent=agent)
     updated = datetime.strptime(p['updated'], time_format)
     # updated = datetime.strptime("Mon, 18 Mar 2019 00:34:42 GMT", time_format)
     print(p['title'])
@@ -89,7 +94,7 @@ for p in publishes:
     for entry in reversed(feed['entries']):
         print(entry['published'])
         published = datetime.strptime(entry['published'], time_format)
-        if (published >= updated): # 同时间有几个文章
+        if (published >= updated):  # 同时间有几个文章
             updated = published
             content = read_entry(entry)
             publish(content, p)
